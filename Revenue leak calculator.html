@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revenue Leak Calculator — Bryan Munuve</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f7fb;min-height:100vh;padding:24px 16px;color:#1a2540}
+  .wrap{max-width:520px;margin:0 auto}
+  .hero{text-align:center;margin-bottom:24px}
+  .hero h1{font-size:22px;font-weight:600;color:#0D1B3E;line-height:1.4;margin-bottom:8px}
+  .hero p{font-size:14px;color:#5a6a8a;line-height:1.6}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:16px}
+  label{font-size:13px;font-weight:500;color:#5a6a8a;display:block;margin-bottom:6px}
+  .field{margin-bottom:16px}
+  input,select{width:100%;padding:11px 14px;border:1px solid #d1daea;border-radius:8px;font-size:15px;color:#1a2540;background:#fff;font-family:inherit}
+  input:focus,select:focus{outline:none;border-color:#3A86FF;box-shadow:0 0 0 3px rgba(58,134,255,0.1)}
+  .btn{width:100%;padding:13px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.2s}
+  .btn-dark{background:#0D1B3E;color:#fff}
+  .btn-dark:hover{background:#1A3260}
+  .btn-blue{background:#3A86FF;color:#fff}
+  .btn-blue:hover{background:#185FA5}
+  .micro{font-size:12px;color:#9aa5b8;text-align:center;margin-top:8px}
+  .divider{height:1px;background:#eef0f5;margin:20px 0}
+  .result-box{background:#f0f4fb;border-radius:10px;padding:20px;text-align:center;margin:16px 0}
+  .result-label{font-size:11px;font-weight:600;color:#5a6a8a;letter-spacing:1px;margin-bottom:8px}
+  .result-num{font-size:30px;font-weight:700;color:#0D1B3E;line-height:1}
+  .result-sub{font-size:13px;color:#5a6a8a;margin-top:6px}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .metric{background:#f0f4fb;border-radius:8px;padding:12px;text-align:center}
+  .metric-label{font-size:11px;color:#5a6a8a;margin-bottom:4px}
+  .metric-val{font-size:18px;font-weight:600;color:#0D1B3E}
+  .note{font-size:13px;color:#5a6a8a;line-height:1.6;margin-bottom:16px}
+  .capture-head{font-size:16px;font-weight:600;color:#0D1B3E;margin-bottom:4px}
+  .capture-sub{font-size:13px;color:#5a6a8a;margin-bottom:14px;line-height:1.5}
+  .success{background:#eaf3de;border:1px solid #97c459;border-radius:8px;padding:14px;text-align:center;color:#27500a;font-size:14px;font-weight:500;margin-top:10px}
+  .error-msg{background:#fce8e8;border:1px solid #f09595;border-radius:8px;padding:10px;text-align:center;color:#791f1f;font-size:13px;margin-top:8px}
+  .proof{margin-top:8px}
+  .proof-head{font-size:11px;font-weight:600;color:#9aa5b8;letter-spacing:1px;margin-bottom:10px}
+  .proof-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+  .proof-dot{width:6px;height:6px;border-radius:50%;background:#3A86FF;margin-top:5px;flex-shrink:0}
+  .proof-text{font-size:13px;color:#5a6a8a;line-height:1.5}
+  .accent-bar{height:3px;background:#3A86FF;border-radius:2px;width:40px;margin:0 auto 16px}
+  #result-section{display:none}
+  #error-inline{display:none}
+  #submit-feedback{margin-top:8px}
+  .cta-link{display:block;text-align:center;font-size:13px;color:#3A86FF;margin-top:12px;text-decoration:none}
+  .cta-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="accent-bar"></div>
+    <h1>How much revenue is your store leaking each month?</h1>
+    <p>Enter two numbers. Get a directional estimate in 10 seconds.</p>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>Monthly store visitors</label>
+      <input type="number" id="visitors" placeholder="e.g. 5,000" min="0">
+    </div>
+    <div class="field">
+      <label>Average order value (USD)</label>
+      <select id="aov">
+        <option value="">Select a range (optional)</option>
+        <option value="30">Under $50</option>
+        <option value="75">$50 – $100</option>
+        <option value="125">$100 – $150</option>
+        <option value="175">$150 – $200</option>
+        <option value="250">$200 – $300</option>
+        <option value="400">$300+</option>
+      </select>
+    </div>
+    <button class="btn btn-dark" onclick="calculate()">Estimate my revenue leak</button>
+    <p class="micro">Takes 10 seconds · No email required</p>
+    <div id="error-inline" class="error-msg"></div>
+
+    <div id="result-section">
+      <div class="divider"></div>
+
+      <div class="result-box">
+        <div class="result-label">ESTIMATED MONTHLY REVENUE LEAKING</div>
+        <div class="result-num" id="result-range"></div>
+        <div class="result-sub">Based on typical 1%–2% conversion gaps for stores your size</div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">Conservative estimate</div>
+          <div class="metric-val" id="low-val"></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Higher-end estimate</div>
+          <div class="metric-val" id="high-val"></div>
+        </div>
+      </div>
+
+      <p class="note">This is a directional estimate based on industry benchmarks. The exact number requires your real funnel data — which is what a full audit surfaces.</p>
+
+      <div class="divider"></div>
+
+      <p class="capture-head">Want the exact number for your store?</p>
+      <p class="capture-sub">Enter your email and I'll send you a breakdown of how to interpret this — and whether a full audit makes sense for your situation.</p>
+
+      <div class="field">
+        <input type="email" id="email-input" placeholder="your@email.com">
+      </div>
+      <button class="btn btn-blue" onclick="submitEmail()">Send me the breakdown</button>
+      <p class="micro">No spam. No calls unless you ask.</p>
+      <div id="submit-feedback"></div>
+
+      <a class="cta-link" href="https://calendly.com/bryanmunuve" target="_blank">Or book a free 15-min call directly →</a>
+    </div>
+  </div>
+
+  <div class="proof">
+    <div class="proof-head">REAL AUDIT RESULTS</div>
+    <div class="proof-item">
+      <div class="proof-dot"></div>
+      <div class="proof-text">$333,874 in revenue identified as at risk across a single store diagnostic</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-dot"></div>
+      <div class="proof-text">$8,500–$22,000/month in recoverable revenue modelled across three fix scenarios</div>
+    </div>
+    <div class="proof-item">
+      <div class="proof-dot"></div>
+      <div class="proof-text">Every finding ranked by dollar value — before a cent is spent on implementation</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function calculate(){
+  const v=parseInt(document.getElementById('visitors').value);
+  const aovEl=document.getElementById('aov');
+  const aov=aovEl.value?parseInt(aovEl.value):null;
+  const errEl=document.getElementById('error-inline');
+
+  if(!v||v<100){
+    errEl.textContent='Please enter at least 100 monthly visitors.';
+    errEl.style.display='block';
+    document.getElementById('result-section').style.display='none';
+    return;
+  }
+  errEl.style.display='none';
+
+  const AOV=aov||50;
+  const lowLeak=Math.round(v*(0.02-0.015)*AOV);
+  const highLeak=Math.round(v*(0.02-0.01)*AOV);
+  const fmt=n=>'$'+n.toLocaleString();
+
+  document.getElementById('result-range').textContent=fmt(lowLeak)+' – '+fmt(highLeak);
+  document.getElementById('low-val').textContent=fmt(lowLeak);
+  document.getElementById('high-val').textContent=fmt(highLeak);
+  document.getElementById('result-section').style.display='block';
+}
+
+async function submitEmail(){
+  const email=document.getElementById('email-input').value.trim();
+  const fb=document.getElementById('submit-feedback');
+
+  if(!email||!email.includes('@')){
+    fb.innerHTML='<div class="error-msg">Please enter a valid email address.</div>';
+    return;
+  }
+
+  const visitors=document.getElementById('visitors').value;
+  const aov=document.getElementById('aov').options[document.getElementById('aov').selectedIndex].text||'not specified';
+  const low=document.getElementById('low-val').textContent;
+  const high=document.getElementById('high-val').textContent;
+
+  fb.innerHTML='<p class="micro">Sending...</p>';
+
+  try{
+    const res=await fetch('https://formspree.io/f/mzdyezbw',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        email:email,
+        message:'New revenue leak calculator lead.\n\nEmail: '+email+'\nVisitors: '+visitors+'/month\nAOV range: '+aov+'\nEstimated leak: '+low+' – '+high+'/month'
+      })
+    });
+    if(res.ok){
+      fb.innerHTML='<div class="success">Sent. Check your inbox within 24 hours.</div>';
+      document.getElementById('email-input').value='';
+    } else {
+      throw new Error('failed');
+    }
+  } catch(e){
+    fb.innerHTML='<div class="error-msg">Something went wrong. Email me directly at Bryanmunuve74@gmail.com</div>';
+  }
+}
+</script>
+</body>
+</html>
