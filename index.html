@@ -42,26 +42,30 @@
   .proof-dot{width:6px;height:6px;border-radius:50%;background:#3A86FF;margin-top:5px;flex-shrink:0}
   .proof-text{font-size:13px;color:#5a6a8a;line-height:1.5}
   .accent-bar{height:3px;background:#3A86FF;border-radius:2px;width:40px;margin:0 auto 16px}
+  .checklist-cta{background:#0D1B3E;border-radius:10px;padding:20px;margin:16px 0;text-align:center}
+  .checklist-cta-head{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px}
+  .checklist-cta-sub{font-size:13px;color:#8a9bb5;margin-bottom:14px;line-height:1.5}
+  .checklist-price-badge{display:inline-block;background:#00FF87;color:#0D1B3E;font-size:12px;font-weight:700;padding:4px 12px;border-radius:4px;margin-bottom:12px;letter-spacing:0.05em}
+  .btn-green{display:block;width:100%;padding:13px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;background:#00C96E;color:#fff;text-decoration:none;text-align:center;transition:background 0.2s}
+  .btn-green:hover{background:#00a85b}
+  .cta-link{display:block;text-align:center;font-size:13px;color:#3A86FF;margin-top:12px;text-decoration:none}
+  .cta-link:hover{text-decoration:underline}
   #result-section{display:none}
   #error-inline{display:none}
   #submit-feedback{margin-top:8px}
-  .cta-link{display:block;text-align:center;font-size:13px;color:#3A86FF;margin-top:12px;text-decoration:none}
-  .cta-link:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <div class="hero">
     <div class="accent-bar"></div>
     <h1>How much revenue is your store leaking each month?</h1>
     <p>Enter two numbers. Get a directional estimate in 10 seconds.</p>
   </div>
-
   <div class="card">
     <div class="field">
       <label>Monthly store visitors</label>
-      <input type="number" id="visitors" placeholder="e.g. 5,000" min="0">
+      <input type="number" id="visitors" placeholder="e.g. 5000" min="0">
     </div>
     <div class="field">
       <label>Average order value (USD)</label>
@@ -78,16 +82,13 @@
     <button class="btn btn-dark" onclick="calculate()">Estimate my revenue leak</button>
     <p class="micro">Takes 10 seconds · No email required</p>
     <div id="error-inline" class="error-msg"></div>
-
     <div id="result-section">
       <div class="divider"></div>
-
       <div class="result-box">
         <div class="result-label">ESTIMATED MONTHLY REVENUE LEAKING</div>
         <div class="result-num" id="result-range"></div>
         <div class="result-sub">Based on typical 1%–2% conversion gaps for stores your size</div>
       </div>
-
       <div class="metrics">
         <div class="metric">
           <div class="metric-label">Conservative estimate</div>
@@ -98,103 +99,65 @@
           <div class="metric-val" id="high-val"></div>
         </div>
       </div>
-
       <p class="note">This is a directional estimate based on industry benchmarks. The exact number requires your real funnel data — which is what a full audit surfaces.</p>
-
       <div class="divider"></div>
-
+      <div class="checklist-cta">
+        <div class="checklist-cta-head">Know exactly which 37 leaks are causing this?</div>
+        <div class="checklist-cta-sub">Get the full Checkout Leak Audit — every leak mapped, every fix included. Built for mobile-money e-commerce stores.</div>
+        <div class="checklist-price-badge">$27 · INSTANT DOWNLOAD</div>
+        <a href="[YOUR_SELAR_LINK]" target="_blank" class="btn-green">Get the full checklist — $27 →</a>
+      </div>
+      <div class="divider"></div>
       <p class="capture-head">Want the exact number for your store?</p>
       <p class="capture-sub">Enter your email and I'll send you a breakdown of how to interpret this — and whether a full audit makes sense for your situation.</p>
-
       <div class="field">
         <input type="email" id="email-input" placeholder="your@email.com">
       </div>
       <button class="btn btn-blue" onclick="submitEmail()">Send me the breakdown</button>
       <p class="micro">No spam. No calls unless you ask.</p>
       <div id="submit-feedback"></div>
-
-      <a class="cta-link" href="https://calendly.com/bryanmunuve" target="_blank">Or book a free 15-min call directly →</a>
+      <a class="cta-link" href="https://calendly.com/bryanmunuve74/new-meeting-1" target="_blank">Or book a free 20-min audit call directly →</a>
     </div>
   </div>
-
   <div class="proof">
     <div class="proof-head">REAL AUDIT RESULTS</div>
-    <div class="proof-item">
-      <div class="proof-dot"></div>
-      <div class="proof-text">$333,874 in revenue identified as at risk across a single store diagnostic</div>
-    </div>
-    <div class="proof-item">
-      <div class="proof-dot"></div>
-      <div class="proof-text">$8,500–$22,000/month in recoverable revenue modelled across three fix scenarios</div>
-    </div>
-    <div class="proof-item">
-      <div class="proof-dot"></div>
-      <div class="proof-text">Every finding ranked by dollar value — before a cent is spent on implementation</div>
-    </div>
+    <div class="proof-item"><div class="proof-dot"></div><div class="proof-text">$333,874 in revenue identified as at risk across a single store diagnostic</div></div>
+    <div class="proof-item"><div class="proof-dot"></div><div class="proof-text">$8,500–$22,000/month in recoverable revenue modelled across three fix scenarios</div></div>
+    <div class="proof-item"><div class="proof-dot"></div><div class="proof-text">Every finding ranked by dollar value — before a cent is spent on implementation</div></div>
   </div>
-
 </div>
-
 <script>
 function calculate(){
-  const v=parseInt(document.getElementById('visitors').value);
-  const aovEl=document.getElementById('aov');
-  const aov=aovEl.value?parseInt(aovEl.value):null;
-  const errEl=document.getElementById('error-inline');
-
-  if(!v||v<100){
-    errEl.textContent='Please enter at least 100 monthly visitors.';
-    errEl.style.display='block';
-    document.getElementById('result-section').style.display='none';
-    return;
-  }
+  var v=parseInt(document.getElementById('visitors').value);
+  var aovEl=document.getElementById('aov');
+  var aov=aovEl.value?parseInt(aovEl.value):null;
+  var errEl=document.getElementById('error-inline');
+  if(!v||v<100){errEl.textContent='Please enter at least 100 monthly visitors.';errEl.style.display='block';document.getElementById('result-section').style.display='none';return;}
   errEl.style.display='none';
-
-  const AOV=aov||50;
-  const lowLeak=Math.round(v*(0.02-0.015)*AOV);
-  const highLeak=Math.round(v*(0.02-0.01)*AOV);
-  const fmt=n=>'$'+n.toLocaleString();
-
+  var AOV=aov||50;
+  var lowLeak=Math.round(v*(0.02-0.015)*AOV);
+  var highLeak=Math.round(v*(0.02-0.01)*AOV);
+  var fmt=function(n){return '$'+n.toLocaleString();};
   document.getElementById('result-range').textContent=fmt(lowLeak)+' – '+fmt(highLeak);
   document.getElementById('low-val').textContent=fmt(lowLeak);
   document.getElementById('high-val').textContent=fmt(highLeak);
   document.getElementById('result-section').style.display='block';
 }
-
 async function submitEmail(){
-  const email=document.getElementById('email-input').value.trim();
-  const fb=document.getElementById('submit-feedback');
-
-  if(!email||!email.includes('@')){
-    fb.innerHTML='<div class="error-msg">Please enter a valid email address.</div>';
-    return;
-  }
-
-  const visitors=document.getElementById('visitors').value;
-  const aov=document.getElementById('aov').options[document.getElementById('aov').selectedIndex].text||'not specified';
-  const low=document.getElementById('low-val').textContent;
-  const high=document.getElementById('high-val').textContent;
-
+  var email=document.getElementById('email-input').value.trim();
+  var fb=document.getElementById('submit-feedback');
+  if(!email||!email.includes('@')){fb.innerHTML='<div class="error-msg">Please enter a valid email address.</div>';return;}
+  var visitors=document.getElementById('visitors').value;
+  var aovEl=document.getElementById('aov');
+  var aov=aovEl.options[aovEl.selectedIndex].text||'not specified';
+  var low=document.getElementById('low-val').textContent;
+  var high=document.getElementById('high-val').textContent;
   fb.innerHTML='<p class="micro">Sending...</p>';
-
   try{
-    const res=await fetch('https://formspree.io/f/xojyzykz',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({
-        email:email,
-        message:'New revenue leak calculator lead.\n\nEmail: '+email+'\nVisitors: '+visitors+'/month\nAOV range: '+aov+'\nEstimated leak: '+low+' – '+high+'/month'
-      })
-    });
-    if(res.ok){
-      fb.innerHTML='<div class="success">Sent. Check your inbox within 24 hours.</div>';
-      document.getElementById('email-input').value='';
-    } else {
-      throw new Error('failed');
-    }
-  } catch(e){
-    fb.innerHTML='<div class="error-msg">Something went wrong. Email me directly at Bryanmunuve74@gmail.com</div>';
-  }
+    var res=await fetch('https://formspree.io/f/xojyzykz',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({email:email,message:'New lead.\n\nEmail: '+email+'\nVisitors: '+visitors+'/month\nAOV: '+aov+'\nLeak: '+low+' – '+high+'/month'})});
+    if(res.ok){fb.innerHTML='<div class="success">Sent. Check your inbox within 24 hours.</div>';document.getElementById('email-input').value='';}
+    else{throw new Error('failed');}
+  }catch(e){fb.innerHTML='<div class="error-msg">Something went wrong. Please try again.</div>';}
 }
 </script>
 </body>
